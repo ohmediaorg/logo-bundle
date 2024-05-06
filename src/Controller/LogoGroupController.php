@@ -32,7 +32,7 @@ class LogoGroupController extends AbstractController
         );
 
         $qb = $logoGroupRepository->createQueryBuilder('lg');
-        $qb->orderBy('lg.id', 'desc');
+        $qb->orderBy('lg.title', 'desc');
 
         return $this->render('@OHMediaLogo/logo_group/logo_group_index.html.twig', [
             'pagination' => $paginator->paginate($qb, 20),
