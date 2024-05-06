@@ -2,9 +2,9 @@
 
 namespace OHMedia\LogoBundle\Form;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
+use OHMedia\LogoBundle\Entity\Logo;
 use OHMedia\LogoBundle\Entity\LogoGroup;
+use OHMedia\LogoBundle\Repository\LogoRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,19 +12,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LogoGroupType extends AbstractType
 {
+    public function __construct(private LogoRepository $logoRepository)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $logoGroup = $options['data'];
 
         $builder->add('title');
 
-        $builder->add('logos', EntityType::class, [
-            'class' => Logo::class,
-            'query_builder' => function (EntityRepository $er): QueryBuilder {
-                return $er->createQueryBuilder('l')
-                    ->orderBy('l.name', 'ASC');
-            },
-        ]);
+        $logos = $this->logoRepository
+            ->createQueryBuilder('l')
+            ->orderBy('l.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        if ($logos) {
+            $builder->add('logos', EntityType::class, [
+                'class' => Logo::class,
+                'choices' => $logos,
+                'required' => false,
+                'expanded' => true,
+                'multiple' => true,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
