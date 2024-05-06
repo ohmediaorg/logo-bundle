@@ -32,7 +32,7 @@ class Logo
     /**
      * @var Collection<int, LogoGroup>
      */
-    #[ORM\ManyToMany(targetEntity: LogoGroup::class)]
+    #[ORM\ManyToMany(targetEntity: LogoGroup::class, mappedBy: 'logos')]
     private Collection $groups;
 
     public function __construct()

@@ -24,7 +24,7 @@ class LogoGroup
     /**
      * @var Collection<int, Logo>
      */
-    #[ORM\ManyToMany(targetEntity: Logo::class)]
+    #[ORM\ManyToMany(targetEntity: Logo::class, inversedBy: 'groups')]
     private Collection $logos;
 
     public function __construct()
