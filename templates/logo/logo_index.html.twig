@@ -35,7 +35,9 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Logo</th>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Groups</th>
             <th>Last Updated</th>
             <th></th>
           </tr>
@@ -43,7 +45,19 @@
         <tbody>
           {% for logo in pagination.results %}
           <tr>
-            <td>{{ logo }}</td>
+            <td>{{ image_tag(logo.image, {
+              height: 50,
+              style: 'height:50px',
+            }) }}</td>
+            <td>
+              {{ logo }}
+              <small class="d-block text-muted">{{ logo.url }}</small>
+            </td>
+            <td>
+              {% for group in logo.groups %}
+              {{ bootstrap_badge_secondary(group.title) }}
+              {% endfor %}
+            </td>
             <td>{{ logo.updatedAt|datetime }}</td>
             <td>
               {% if is_granted(attributes.edit, logo) %}

@@ -4,7 +4,8 @@
 
 {% block breadcrumbs %}
 {{ bootstrap_breadcrumbs(
-  bootstrap_breadcrumb(bootstrap_icon('images') ~ ' Groups', 'logo_group_index'),
+  bootstrap_breadcrumb(bootstrap_icon('images') ~ ' Logos', 'logo_index'),
+  bootstrap_breadcrumb('Groups', 'logo_group_index'),
 ) }}
 {% endblock %}
 
@@ -35,7 +36,8 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Group</th>
+            <th>Title</th>
+            <th>Logos</th>
             <th>Last Updated</th>
             <th></th>
           </tr>
@@ -44,6 +46,7 @@
           {% for logo_group in pagination.results %}
           <tr>
             <td>{{ logo_group }}</td>
+            <td>{{ logo_group.logos|length }}</td>
             <td>{{ logo_group.updatedAt|datetime }}</td>
             <td>
               {% if is_granted(attributes.edit, logo_group) %}
