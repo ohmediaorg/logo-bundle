@@ -38,6 +38,7 @@
           <tr>
             <th>Title</th>
             <th>Logos</th>
+            <th>Shortcodes</th>
             <th>Last Updated</th>
             <th></th>
           </tr>
@@ -47,6 +48,11 @@
           <tr>
             <td>{{ logo_group }}</td>
             <td>{{ logo_group.logos|length }}</td>
+            <td>
+              <code>{{ '{{ logos_grid(' ~ logo_group.id ~ ') }}' }}</code>
+              <br>
+              <code>{{ '{{ logos_slider(' ~ logo_group.id ~ ') }}' }}</code>
+            </td>
             <td>{{ logo_group.updatedAt|datetime }}</td>
             <td>
               {% if is_granted(attributes.edit, logo_group) %}
