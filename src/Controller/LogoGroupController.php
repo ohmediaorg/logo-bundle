@@ -7,6 +7,7 @@ use OHMedia\BootstrapBundle\Service\Paginator;
 use OHMedia\LogoBundle\Entity\LogoGroup;
 use OHMedia\LogoBundle\Form\LogoGroupType;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
+use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoGroupVoter;
 use OHMedia\SecurityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,7 +45,8 @@ class LogoGroupController extends AbstractController
     #[Route('/logos/group/create', name: 'logo_group_create', methods: ['GET', 'POST'])]
     public function create(
         Request $request,
-        LogoGroupRepository $logoGroupRepository
+        LogoGroupRepository $logoGroupRepository,
+        LogoRepository $logoRepository
     ): Response {
         $logoGroup = new LogoGroup();
 
@@ -71,6 +73,7 @@ class LogoGroupController extends AbstractController
         return $this->render('@OHMediaLogo/logo_group/logo_group_create.html.twig', [
             'form' => $form->createView(),
             'logo_group' => $logoGroup,
+            'logos_unselected' => $logoRepository->findNotInLogoGroup($logoGroup),
         ]);
     }
 
@@ -78,7 +81,8 @@ class LogoGroupController extends AbstractController
     public function edit(
         Request $request,
         LogoGroup $logoGroup,
-        LogoGroupRepository $logoGroupRepository
+        LogoGroupRepository $logoGroupRepository,
+        LogoRepository $logoRepository
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoGroupVoter::EDIT,
@@ -103,6 +107,7 @@ class LogoGroupController extends AbstractController
         return $this->render('@OHMediaLogo/logo_group/logo_group_edit.html.twig', [
             'form' => $form->createView(),
             'logo_group' => $logoGroup,
+            'logos_unselected' => $logoRepository->findNotInLogoGroup($logoGroup),
         ]);
     }
 

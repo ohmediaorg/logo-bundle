@@ -5,6 +5,7 @@ namespace OHMedia\LogoBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use OHMedia\LogoBundle\Entity\Logo;
+use OHMedia\LogoBundle\Entity\LogoGroup;
 
 /**
  * @method Logo|null find($id, $lockMode = null, $lockVersion = null)
@@ -35,5 +36,15 @@ class LogoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findNotInLogoGroup(LogoGroup $logoGroup)
+    {
+        return $this->createQueryBuilder('l')
+            ->leftJoin('l.groups', 'g')
+            ->where('g.id <> :id')
+            ->setParameter('id', $logoGroup->getId())
+            ->getQuery()
+            ->getResult();
     }
 }
