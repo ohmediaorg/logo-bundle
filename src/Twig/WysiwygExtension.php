@@ -20,7 +20,7 @@ class WysiwygExtension extends AbstractWysiwygExtension
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
-            new TwigFunction('logos_slider', [$this, 'logosSlider'], [
+            new TwigFunction('logos_carousel', [$this, 'logosCarousel'], [
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
@@ -29,23 +29,17 @@ class WysiwygExtension extends AbstractWysiwygExtension
 
     public function logosGrid(Environment $twig, int $id = null)
     {
-        return $this->renderLogos($id, '@OHMediaLogo/logos_grid.html.twig');
+        return $this->renderLogos($twig, $id, '@OHMediaLogo/logos_grid.html.twig');
     }
 
-    public function logosSlider(Environment $twig, int $id = null)
+    public function logosCarousel(Environment $twig, int $id = null)
     {
-        return $this->renderLogos($id, '@OHMediaLogo/logos_slider.html.twig');
+        return $this->renderLogos($twig, $id, '@OHMediaLogo/logos_carousel.html.twig');
     }
 
-    private function renderLogos(?int $id, string $template): string
+    private function renderLogos(Environment $twig, ?int $id, string $template): string
     {
-        $logoGroup = $this->logoGroupRepository
-            ->createQueryBuilder('lg')
-            ->join('lg.logos', 'l')
-            ->where('lg.id = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->getResult();
+        $logoGroup = $this->logoGroupRepository->find($id);
 
         if (!$logoGroup) {
             return '';
@@ -57,11 +51,13 @@ class WysiwygExtension extends AbstractWysiwygExtension
             return '';
         }
 
-        shuffle($logos);
+        $logosArray = $logos->toArray();
+
+        shuffle($logosArray);
 
         return $twig->render($template, [
             'logo_group' => $logoGroup,
-            'logos' => $logos,
+            'logos' => $logosArray,
         ]);
     }
 }

@@ -28,10 +28,33 @@ Run `php bin/console make:migration` then run the subsequent migration.
 
 # Frontend
 
-Create `templates/bundles/OHMediaLogoBundle/grid.html.twig` and
-`templates/bundles/OHMediaLogoBundle/slider.html.twig`. Which are expected for
-rendering `{{ logo_group_grid(id) }}` and `{{ logo_group_slider(id) }}`.
+Create `templates/bundles/OHMediaLogoBundle/logos_grid.html.twig` and
+`templates/bundles/OHMediaLogoBundle/logos_carousel.html.twig`. Which are expected
+for rendering the WYSIWYG Twig functions `{{ logos_grid(id) }}` and
+`{{ logos_carousel(id) }}`.
 
 ## Splide Integration
 
-TODO!
+Run `npm install @splidejs/splide` and add these lines to `assets/frontend/frontend.js`:
+
+```js
+import { Splide } from '@splidejs/splide';
+import '@splidejs/splide/dist/css/splide.min.css';
+window.Splide = Splide;
+```
+
+Utilize the basic markup in `templates/bundles/OHMediaLogoBundle/logos_carousel.html.twig`:
+
+```twig
+<section class="splide">
+  <div class="splide__track">
+		<ul class="splide__list">
+      {% for logo in logos %}
+			<li class="splide__slide">
+        {{ image_tag(logo.image) }}
+      </li>
+      {% endfor %}
+		</ul>
+  </div>
+</section>
+```
