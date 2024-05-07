@@ -16,25 +16,25 @@ class WysiwygExtension extends AbstractWysiwygExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('logo_group_grid', [$this, 'logoGroupGrid'], [
+            new TwigFunction('logos_grid', [$this, 'logosGrid'], [
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
-            new TwigFunction('logo_group_slider', [$this, 'logoGroupSlider'], [
+            new TwigFunction('logos_slider', [$this, 'logosSlider'], [
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
         ];
     }
 
-    public function logoGroupGrid(Environment $twig, int $id = null)
+    public function logosGrid(Environment $twig, int $id = null)
     {
-        return $this->renderLogos($id, '@OHMediaLogo/logo_group_grid.html.twig');
+        return $this->renderLogos($id, '@OHMediaLogo/logos_grid.html.twig');
     }
 
-    public function logoGroupSlider(Environment $twig, int $id = null)
+    public function logosSlider(Environment $twig, int $id = null)
     {
-        return $this->renderLogos($id, '@OHMediaLogo/logo_group_slider.html.twig');
+        return $this->renderLogos($id, '@OHMediaLogo/logos_slider.html.twig');
     }
 
     private function renderLogos(?int $id, string $template): string
