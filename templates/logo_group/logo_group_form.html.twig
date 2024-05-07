@@ -2,6 +2,15 @@
 
 {% block meta_title %}{{ form_title }}{% endblock %}
 
+{% macro logo(logo) %}
+<a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
+  {{ image_tag(logo.image, {
+    height: 50,
+    style: 'height: 50px',
+  }) }}
+</a>
+{% endmacro %}
+
 {% block main %}
 <div class="card">
   <div class="card-body">
@@ -31,24 +40,14 @@
         <div class="col-6">
           <div class="d-flex flex-wrap bg-success-subtle gap-2 p-2 h-100" id="logos_selected">
             {% for logo in logo_group.logos %}
-            <a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
-              {{ image_tag(logo.image, {
-                height: 50,
-                style: 'height: 50px',
-              }) }}
-            </a>
+            {{ _self.logo(logo) }}
             {% endfor %}
           </div>
         </div>
         <div class="col-6">
           <div class="d-flex flex-wrap bg-warning-subtle gap-2 p-2 h-100" id="logos_unselected">
             {% for logo in logos_unselected %}
-            <a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
-              {{ image_tag(logo.image, {
-                height: 50,
-                style: 'height: 50px',
-              }) }}
-            </a>
+            {{ _self.logo(logo) }}
             {% endfor %}
           </div>
         </div>
