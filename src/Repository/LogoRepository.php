@@ -42,7 +42,7 @@ class LogoRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('l')
             ->leftJoin('l.groups', 'g')
-            ->where('g.id <> :id')
+            ->where('g.id IS NULL OR g.id != :id')
             ->setParameter('id', $logoGroup->getId())
             ->getQuery()
             ->getResult();
