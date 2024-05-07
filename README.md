@@ -48,13 +48,13 @@ Utilize the basic markup in `templates/bundles/OHMediaLogoBundle/logos_carousel.
 ```twig
 <section class="splide">
   <div class="splide__track">
-		<ul class="splide__list">
+    <ul class="splide__list">
       {% for logo in logos %}
-			<li class="splide__slide">
+      <li class="splide__slide">
         {{ image_tag(logo.image) }}
       </li>
       {% endfor %}
-		</ul>
+    </ul>
   </div>
 </section>
 ```
