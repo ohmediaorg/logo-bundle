@@ -39,7 +39,7 @@ class WysiwygExtension extends AbstractWysiwygExtension
 
     private function renderLogos(Environment $twig, ?int $id, string $template): string
     {
-        $logoGroup = $this->logoGroupRepository->find($id);
+        $logoGroup = $id ? $this->logoGroupRepository->find($id) : null;
 
         if (!$logoGroup) {
             return '';
