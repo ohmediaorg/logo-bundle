@@ -5,6 +5,7 @@ namespace OHMedia\LogoBundle\Security\Voter;
 use OHMedia\LogoBundle\Entity\LogoGroup;
 use OHMedia\SecurityBundle\Entity\User;
 use OHMedia\SecurityBundle\Security\Voter\AbstractEntityVoter;
+use OHMedia\WysiwygBundle\Service\Wysiwyg;
 
 class LogoGroupVoter extends AbstractEntityVoter
 {
@@ -12,6 +13,10 @@ class LogoGroupVoter extends AbstractEntityVoter
     public const CREATE = 'create';
     public const EDIT = 'edit';
     public const DELETE = 'delete';
+
+    public function __construct(private Wysiwyg $wysiwyg)
+    {
+    }
 
     protected function getAttributes(): array
     {
@@ -45,6 +50,8 @@ class LogoGroupVoter extends AbstractEntityVoter
 
     protected function canDelete(LogoGroup $logoGroup, User $loggedIn): bool
     {
-        return true;
+        $shortcode = sprintf('{{ logos(%d) }}', $logoGroup->getId());
+
+        return !$this->wysiwyg->shortcodesInUse($shortcode);
     }
 }
