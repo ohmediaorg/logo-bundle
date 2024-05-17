@@ -6,7 +6,7 @@ use OHMedia\BackendBundle\Shortcodes\AbstractShortcodeProvider;
 use OHMedia\BackendBundle\Shortcodes\Shortcode;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
 
-class LogoGridShortcodeProvider extends AbstractShortcodeProvider
+class LogoShortcodeProvider extends AbstractShortcodeProvider
 {
     public function __construct(private LogoGroupRepository $logoGroupRepository)
     {
@@ -14,7 +14,7 @@ class LogoGridShortcodeProvider extends AbstractShortcodeProvider
 
     public function getTitle(): string
     {
-        return 'Logo Grids';
+        return 'Logos';
     }
 
     public function buildShortcodes(): void
@@ -29,7 +29,7 @@ class LogoGridShortcodeProvider extends AbstractShortcodeProvider
 
             $this->addShortcode(new Shortcode(
                 sprintf('%s (ID:%s)', $logoGroup, $id),
-                'logos_grid('.$id.')'
+                'logos('.$id.')'
             ));
         }
     }

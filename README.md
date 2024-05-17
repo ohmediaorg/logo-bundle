@@ -28,10 +28,8 @@ Run `php bin/console make:migration` then run the subsequent migration.
 
 # Frontend
 
-Create `templates/bundles/OHMediaLogoBundle/logos_grid.html.twig` and
-`templates/bundles/OHMediaLogoBundle/logos_carousel.html.twig`. Which are expected
-for rendering the WYSIWYG Twig functions `{{ logos_grid(id) }}` and
-`{{ logos_carousel(id) }}`.
+Create `templates/bundles/OHMediaLogoBundle/logos.html.twig`, which is expected
+for rendering the WYSIWYG Twig function `{{ logos(id) }}`.
 
 ## Splide Integration
 
@@ -43,7 +41,7 @@ import '@splidejs/splide/dist/css/splide.min.css';
 window.Splide = Splide;
 ```
 
-Utilize the basic markup in `templates/bundles/OHMediaLogoBundle/logos_carousel.html.twig`:
+Utilize the basic markup in `templates/bundles/OHMediaLogoBundle/logos.html.twig`:
 
 ```twig
 <section class="splide">

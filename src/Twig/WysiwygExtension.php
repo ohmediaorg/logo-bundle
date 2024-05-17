@@ -16,28 +16,14 @@ class WysiwygExtension extends AbstractWysiwygExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('logos_grid', [$this, 'logosGrid'], [
-                'is_safe' => ['html'],
-                'needs_environment' => true,
-            ]),
-            new TwigFunction('logos_carousel', [$this, 'logosCarousel'], [
+            new TwigFunction('logos', [$this, 'logos'], [
                 'is_safe' => ['html'],
                 'needs_environment' => true,
             ]),
         ];
     }
 
-    public function logosGrid(Environment $twig, int $id = null)
-    {
-        return $this->renderLogos($twig, $id, '@OHMediaLogo/logos_grid.html.twig');
-    }
-
-    public function logosCarousel(Environment $twig, int $id = null)
-    {
-        return $this->renderLogos($twig, $id, '@OHMediaLogo/logos_carousel.html.twig');
-    }
-
-    private function renderLogos(Environment $twig, ?int $id, string $template): string
+    public function logos(Environment $twig, int $id = null): string
     {
         $logoGroup = $id ? $this->logoGroupRepository->find($id) : null;
 
@@ -55,7 +41,7 @@ class WysiwygExtension extends AbstractWysiwygExtension
 
         shuffle($logosArray);
 
-        return $twig->render($template, [
+        return $twig->render('@OHMediaLogo/logos.html.twig', [
             'logo_group' => $logoGroup,
             'logos' => $logosArray,
         ]);
