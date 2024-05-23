@@ -19,11 +19,17 @@ class LogoNavItemProvider extends AbstractNavItemProvider
             ->setIcon('images');
 
         if ($this->isGranted(LogoGroupVoter::INDEX, new LogoGroup())) {
-            $dropdown->addLink(new NavLink('Groups', 'logo_group_index'));
+            $groupsLink = (new NavLink('Groups', 'logo_group_index'))
+                ->setIcon('collection');
+
+            $dropdown->addLink($groupsLink);
         }
 
         if ($this->isGranted(LogoVoter::INDEX, new Logo())) {
-            $dropdown->addLink(new NavLink('Logos', 'logo_index'));
+            $logosLink = (new NavLink('Logos', 'logo_index'))
+                ->setIcon('images');
+
+            $dropdown->addLink($logosLink);
         }
 
         return $dropdown;
