@@ -16,7 +16,7 @@
 {% block actions %}
 {% if can_create_logo_group %}
 <a href="{{ create_logo_group_href }}" class="btn btn-sm btn-primary">
-  <i class="bi bi-plus"></i> Add Group</a>
+  {{ bootstrap_icon('plus') }} Add Group</a>
 {% endif %}
 {% endblock %}
 
