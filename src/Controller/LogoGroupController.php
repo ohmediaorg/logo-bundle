@@ -19,11 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Admin]
 class LogoGroupController extends AbstractController
 {
+    public function __construct(private LogoGroupRepository $logoGroupRepository)
+    {
+    }
+
     #[Route('/logos/groups', name: 'logo_group_index', methods: ['GET'])]
-    public function index(
-        LogoGroupRepository $logoGroupRepository,
-        Paginator $paginator
-    ): Response {
+    public function index(Paginator $paginator): Response
+    {
         $newLogoGroup = new LogoGroup();
 
         $this->denyAccessUnlessGranted(
@@ -32,7 +34,7 @@ class LogoGroupController extends AbstractController
             'You cannot access the list of groups.'
         );
 
-        $qb = $logoGroupRepository->createQueryBuilder('lg');
+        $qb = $this->logoGroupRepository->createQueryBuilder('lg');
         $qb->orderBy('lg.title', 'desc');
 
         return $this->render('@OHMediaLogo/logo_group/logo_group_index.html.twig', [
@@ -45,7 +47,6 @@ class LogoGroupController extends AbstractController
     #[Route('/logos/group/create', name: 'logo_group_create', methods: ['GET', 'POST'])]
     public function create(
         Request $request,
-        LogoGroupRepository $logoGroupRepository,
         LogoRepository $logoRepository
     ): Response {
         $logoGroup = new LogoGroup();
@@ -63,7 +64,7 @@ class LogoGroupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoGroupRepository->save($logoGroup, true);
+            $this->logoGroupRepository->save($logoGroup, true);
 
             $this->addFlash('notice', 'The group was created successfully.');
 
@@ -81,7 +82,6 @@ class LogoGroupController extends AbstractController
     public function edit(
         Request $request,
         LogoGroup $logoGroup,
-        LogoGroupRepository $logoGroupRepository,
         LogoRepository $logoRepository
     ): Response {
         $this->denyAccessUnlessGranted(
@@ -97,7 +97,7 @@ class LogoGroupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoGroupRepository->save($logoGroup, true);
+            $this->logoGroupRepository->save($logoGroup, true);
 
             $this->addFlash('notice', 'The group was updated successfully.');
 
@@ -115,7 +115,6 @@ class LogoGroupController extends AbstractController
     public function delete(
         Request $request,
         LogoGroup $logoGroup,
-        LogoGroupRepository $logoGroupRepository
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoGroupVoter::DELETE,
@@ -130,7 +129,7 @@ class LogoGroupController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoGroupRepository->remove($logoGroup, true);
+            $this->logoGroupRepository->remove($logoGroup, true);
 
             $this->addFlash('notice', 'The group was deleted successfully.');
 

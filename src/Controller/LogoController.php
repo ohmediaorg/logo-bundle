@@ -18,11 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Admin]
 class LogoController extends AbstractController
 {
+    public function __construct(private LogoRepository $logoRepository)
+    {
+    }
+
     #[Route('/logos', name: 'logo_index', methods: ['GET'])]
-    public function index(
-        LogoRepository $logoRepository,
-        Paginator $paginator
-    ): Response {
+    public function index(Paginator $paginator): Response
+    {
         $newLogo = new Logo();
 
         $this->denyAccessUnlessGranted(
@@ -31,7 +33,7 @@ class LogoController extends AbstractController
             'You cannot access the list of logos.'
         );
 
-        $qb = $logoRepository->createQueryBuilder('l');
+        $qb = $this->logoRepository->createQueryBuilder('l');
         $qb->orderBy('l.name', 'desc');
 
         return $this->render('@OHMediaLogo/logo/logo_index.html.twig', [
@@ -42,10 +44,8 @@ class LogoController extends AbstractController
     }
 
     #[Route('/logo/create', name: 'logo_create', methods: ['GET', 'POST'])]
-    public function create(
-        Request $request,
-        LogoRepository $logoRepository
-    ): Response {
+    public function create(Request $request): Response
+    {
         $logo = new Logo();
 
         $this->denyAccessUnlessGranted(
@@ -61,7 +61,7 @@ class LogoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoRepository->save($logo, true);
+            $this->logoRepository->save($logo, true);
 
             $this->addFlash('notice', 'The logo was created successfully.');
 
@@ -78,7 +78,6 @@ class LogoController extends AbstractController
     public function edit(
         Request $request,
         Logo $logo,
-        LogoRepository $logoRepository
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoVoter::EDIT,
@@ -93,7 +92,7 @@ class LogoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoRepository->save($logo, true);
+            $this->logoRepository->save($logo, true);
 
             $this->addFlash('notice', 'The logo was updated successfully.');
 
@@ -110,7 +109,6 @@ class LogoController extends AbstractController
     public function delete(
         Request $request,
         Logo $logo,
-        LogoRepository $logoRepository
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoVoter::DELETE,
@@ -125,7 +123,7 @@ class LogoController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $logoRepository->remove($logo, true);
+            $this->logoRepository->remove($logo, true);
 
             $this->addFlash('notice', 'The logo was deleted successfully.');
 
