@@ -60,12 +60,16 @@ class LogoController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoRepository->save($logo, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoRepository->save($logo, true);
 
-            $this->addFlash('notice', 'The logo was created successfully.');
+                $this->addFlash('notice', 'The logo was created successfully.');
 
-            return $this->redirectToRoute('logo_index');
+                return $this->redirectToRoute('logo_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo/logo_create.html.twig', [
@@ -91,12 +95,16 @@ class LogoController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoRepository->save($logo, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoRepository->save($logo, true);
 
-            $this->addFlash('notice', 'The logo was updated successfully.');
+                $this->addFlash('notice', 'The logo was updated successfully.');
 
-            return $this->redirectToRoute('logo_index');
+                return $this->redirectToRoute('logo_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo/logo_edit.html.twig', [
@@ -122,12 +130,16 @@ class LogoController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoRepository->remove($logo, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoRepository->remove($logo, true);
 
-            $this->addFlash('notice', 'The logo was deleted successfully.');
+                $this->addFlash('notice', 'The logo was deleted successfully.');
 
-            return $this->redirectToRoute('logo_index');
+                return $this->redirectToRoute('logo_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo/logo_delete.html.twig', [

@@ -63,12 +63,16 @@ class LogoGroupController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoGroupRepository->save($logoGroup, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoGroupRepository->save($logoGroup, true);
 
-            $this->addFlash('notice', 'The group was created successfully.');
+                $this->addFlash('notice', 'The group was created successfully.');
 
-            return $this->redirectToRoute('logo_group_index');
+                return $this->redirectToRoute('logo_group_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo_group/logo_group_create.html.twig', [
@@ -96,12 +100,16 @@ class LogoGroupController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoGroupRepository->save($logoGroup, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoGroupRepository->save($logoGroup, true);
 
-            $this->addFlash('notice', 'The group was updated successfully.');
+                $this->addFlash('notice', 'The group was updated successfully.');
 
-            return $this->redirectToRoute('logo_group_index');
+                return $this->redirectToRoute('logo_group_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo_group/logo_group_edit.html.twig', [
@@ -128,12 +136,16 @@ class LogoGroupController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->logoGroupRepository->remove($logoGroup, true);
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $this->logoGroupRepository->remove($logoGroup, true);
 
-            $this->addFlash('notice', 'The group was deleted successfully.');
+                $this->addFlash('notice', 'The group was deleted successfully.');
 
-            return $this->redirectToRoute('logo_group_index');
+                return $this->redirectToRoute('logo_group_index');
+            }
+
+            $this->addFlash('error', 'There are some errors in the form below.');
         }
 
         return $this->render('@OHMediaLogo/logo_group/logo_group_delete.html.twig', [
