@@ -49,7 +49,7 @@
             <td>{{ logo_group }}</td>
             <td>{{ logo_group.logos|length }}</td>
             <td>
-              <code>{{ '{{logos(' ~ logo_group.id ~ ')}}' }}</code>
+              {{ shortcode('logos(' ~ logo_group.id ~ ')') }}
             </td>
             <td>{{ logo_group.updatedAt|datetime }}</td>
             <td>
