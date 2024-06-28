@@ -50,7 +50,7 @@ class LogoGroupVoter extends AbstractEntityVoter
 
     protected function canDelete(LogoGroup $logoGroup, User $loggedIn): bool
     {
-        $shortcode = sprintf('{{ logos(%d) }}', $logoGroup->getId());
+        $shortcode = sprintf('logos(%d)', $logoGroup->getId());
 
         return !$this->wysiwyg->shortcodesInUse($shortcode);
     }
