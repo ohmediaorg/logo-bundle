@@ -7,12 +7,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use OHMedia\FileBundle\Entity\File;
 use OHMedia\LogoBundle\Repository\LogoRepository;
-use OHMedia\SecurityBundle\Entity\Traits\BlameableTrait;
+use OHMedia\UtilityBundle\Entity\BlameableEntityTrait;
 
 #[ORM\Entity(repositoryClass: LogoRepository::class)]
 class Logo
 {
-    use BlameableTrait;
+    use BlameableEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

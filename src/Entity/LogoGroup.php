@@ -6,12 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
-use OHMedia\SecurityBundle\Entity\Traits\BlameableTrait;
+use OHMedia\UtilityBundle\Entity\BlameableEntityTrait;
 
 #[ORM\Entity(repositoryClass: LogoGroupRepository::class)]
 class LogoGroup
 {
-    use BlameableTrait;
+    use BlameableEntityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
