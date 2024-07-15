@@ -8,7 +8,7 @@ use OHMedia\LogoBundle\Entity\Logo;
 use OHMedia\LogoBundle\Form\LogoType;
 use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoVoter;
-use OHMedia\SecurityBundle\Form\DeleteType;
+use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;

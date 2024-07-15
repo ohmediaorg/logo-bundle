@@ -9,7 +9,7 @@ use OHMedia\LogoBundle\Form\LogoGroupType;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
 use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoGroupVoter;
-use OHMedia\SecurityBundle\Form\DeleteType;
+use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
