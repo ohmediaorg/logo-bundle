@@ -2,9 +2,9 @@
 
 namespace OHMedia\LogoBundle\Service;
 
-use OHMedia\BackendBundle\Shortcodes\AbstractShortcodeProvider;
-use OHMedia\BackendBundle\Shortcodes\Shortcode;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
+use OHMedia\WysiwygBundle\Shortcodes\AbstractShortcodeProvider;
+use OHMedia\WysiwygBundle\Shortcodes\Shortcode;
 
 class LogoShortcodeProvider extends AbstractShortcodeProvider
 {
