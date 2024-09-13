@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use OHMedia\FileBundle\Entity\File;
 use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\UtilityBundle\Entity\BlameableEntityTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LogoRepository::class)]
 class Logo
@@ -20,9 +21,12 @@ class Logo
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $url = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -55,7 +59,7 @@ class Logo
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -79,7 +83,7 @@ class Logo
         return $this->image;
     }
 
-    public function setImage(File $image): static
+    public function setImage(?File $image): static
     {
         $this->image = $image;
 

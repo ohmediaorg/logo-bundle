@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use OHMedia\LogoBundle\Repository\LogoGroupRepository;
 use OHMedia\UtilityBundle\Entity\BlameableEntityTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LogoGroupRepository::class)]
 class LogoGroup
@@ -19,6 +20,8 @@ class LogoGroup
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $title = null;
 
     /**
@@ -47,7 +50,7 @@ class LogoGroup
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
