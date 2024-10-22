@@ -11,6 +11,8 @@
 </a>
 {% endmacro %}
 
+{% set has_logos = form.logos is defined %}
+
 {% block main %}
 <div class="card">
   <div class="card-body">
@@ -19,42 +21,52 @@
     {{ form_start(form) }}
     {{ form_row(form.title) }}
 
-    <fieldset class="mb-3">
-      {{ form_label(form.logos) }}
+    {% if has_logos %}
+      <fieldset class="mb-3">
+        {{ form_label(form.logos) }}
 
-      <div>
-        <small class="d-block mb-3">Click a logo to select/unselect. Logos will be displayed in a random order on the website.</small>
+        <div>
+          <small class="d-block mb-3">Click a logo to select/unselect. Logos will be displayed in a random order on the website.</small>
 
-        {{ form_widget(form.logos, {
-          attr: {
-            style: 'display:none',
-          }
-        }) }}
+          {{ form_widget(form.logos, {
+            attr: {
+              style: 'display:none',
+            }
+          }) }}
 
-        <div class="row">
-          <div class="col-6">
-            <label>{{ bootstrap_icon('check') }} Selected</label>
-          </div>
-          <div class="col-6">
-            <label>{{ bootstrap_icon('x') }} Unselected</label>
-          </div>
-          <div class="col-6">
-            <div class="d-flex flex-wrap bg-success-subtle gap-2 p-2 h-100" id="logos_selected">
-              {% for logo in logo_group.logos %}
-              {{ _self.logo(logo) }}
-              {% endfor %}
+          <div class="row">
+            <div class="col-6">
+              <label>{{ bootstrap_icon('check') }} Selected</label>
             </div>
-          </div>
-          <div class="col-6">
-            <div class="d-flex flex-wrap bg-warning-subtle gap-2 p-2 h-100" id="logos_unselected">
-              {% for logo in logos_unselected %}
-              {{ _self.logo(logo) }}
-              {% endfor %}
+            <div class="col-6">
+              <label>{{ bootstrap_icon('x') }} Unselected</label>
+            </div>
+            <div class="col-6">
+              <div class="d-flex flex-wrap bg-success-subtle gap-2 p-2 h-100" id="logos_selected">
+                {% for logo in logo_group.logos %}
+                {{ _self.logo(logo) }}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="d-flex flex-wrap bg-warning-subtle gap-2 p-2 h-100" id="logos_unselected">
+                {% for logo in logos_unselected %}
+                {{ _self.logo(logo) }}
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </fieldset>
+      </fieldset>
+    {% else %}
+      <fieldset class="mb-3">
+        <legend class="col-form-label">Logos</legend>
+
+        <div>
+          <small class="d-block mb-3">There aren't any logos yet.</small>
+        </div>
+      </fieldset>
+    {% endif %}
 
     {{ form_end(form) }}
   </div>
@@ -62,6 +74,7 @@
 {% endblock %}
 
 {% block javascripts %}
+{% if has_logos %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const containerSelected = document.getElementById('logos_selected');
@@ -94,4 +107,5 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+{% endif %}
 {% endblock %}
