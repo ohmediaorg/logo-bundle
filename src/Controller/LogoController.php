@@ -9,6 +9,7 @@ use OHMedia\LogoBundle\Form\LogoType;
 use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoVoter;
 use OHMedia\UtilityBundle\Form\DeleteType;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -81,7 +82,7 @@ class LogoController extends AbstractController
     #[Route('/logo/{id}/edit', name: 'logo_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
-        Logo $logo,
+        #[MapEntity(id: 'id')] Logo $logo,
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoVoter::EDIT,
@@ -116,7 +117,7 @@ class LogoController extends AbstractController
     #[Route('/logo/{id}/delete', name: 'logo_delete', methods: ['GET', 'POST'])]
     public function delete(
         Request $request,
-        Logo $logo,
+        #[MapEntity(id: 'id')] Logo $logo,
     ): Response {
         $this->denyAccessUnlessGranted(
             LogoVoter::DELETE,
