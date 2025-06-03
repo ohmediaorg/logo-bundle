@@ -13,8 +13,6 @@ class LogoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $logo = $options['data'];
-
         $builder->add('name');
 
         $builder->add('url', UrlType::class, [
@@ -24,7 +22,6 @@ class LogoType extends AbstractType
 
         $builder->add('image', FileEntityType::class, [
             'image' => true,
-            'data' => $logo->getImage(),
         ]);
     }
 
