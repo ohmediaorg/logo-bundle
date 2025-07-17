@@ -59,7 +59,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('submit', SubmitType::class);
+        $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
 
@@ -96,7 +96,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('submit', SubmitType::class);
+        $form->add('save', SubmitType::class);
 
         $form->handleRequest($request);
 
