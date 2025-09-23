@@ -40,11 +40,18 @@ class LogoRepository extends ServiceEntityRepository
 
     public function findNotInLogoGroup(LogoGroup $logoGroup)
     {
-        return $this->createQueryBuilder('l')
-            ->leftJoin('l.groups', 'g')
-            ->where('g.id IS NULL OR g.id != :id')
-            ->setParameter('id', $logoGroup->getId())
-            ->getQuery()
+        $qb = $this->createQueryBuilder('l');
+
+        if ($logoGroup->getId()) {
+            $qb->where('l.id NOT IN (
+                SELECT l2.id
+                FROM '.Logo::class.' l2
+                JOIN l2.groups g WITH g.id = :id
+            )')
+            ->setParameter('id', $logoGroup->getId());
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 }
