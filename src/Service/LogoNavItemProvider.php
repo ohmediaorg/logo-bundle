@@ -16,7 +16,7 @@ class LogoNavItemProvider extends AbstractNavItemProvider
     public function getNavItem(): ?NavItemInterface
     {
         $dropdown = (new NavDropdown('Logos'))
-            ->setIcon('images');
+            ->setIcon('patch-check');
 
         if ($this->isGranted(LogoGroupVoter::INDEX, new LogoGroup())) {
             $groupsLink = (new NavLink('Groups', 'logo_group_index'))
@@ -27,7 +27,7 @@ class LogoNavItemProvider extends AbstractNavItemProvider
 
         if ($this->isGranted(LogoVoter::INDEX, new Logo())) {
             $logosLink = (new NavLink('Logos', 'logo_index'))
-                ->setIcon('images');
+                ->setIcon('patch-check');
 
             $dropdown->addLink($logosLink);
         }
