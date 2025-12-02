@@ -3,9 +3,9 @@
 {% block meta_title %}Logos{% endblock %}
 
 {% block breadcrumbs %}
-{{ bootstrap_breadcrumbs(
-  bootstrap_breadcrumb(bootstrap_icon('patch-check') ~ ' Logos', 'logo_index'),
-) }}
+  {{ bootstrap_breadcrumbs(
+    bootstrap_breadcrumb(bootstrap_icon('patch-check') ~ ' Logos', 'logo_index'),
+  ) }}
 {% endblock %}
 
 {% set can_create_logo = is_granted(attributes.create, new_logo) %}
@@ -13,82 +13,84 @@
 {% set create_logo_href = path('logo_create') %}
 
 {% block actions %}
-{% if can_create_logo %}
-<a href="{{ create_logo_href }}" class="btn btn-sm btn-primary">
-  {{ bootstrap_icon('plus-lg') }} Add Logo</a>
-{% endif %}
+  {% if can_create_logo %}
+    <a href="{{ create_logo_href }}" class="btn btn-primary">
+      {{ bootstrap_icon('plus-lg') }}
+      Add Logo
+    </a>
+  {% endif %}
 {% endblock %}
 
 {% block main %}
-{% set logo_count = pagination.count %}
+  {% set logo_count = pagination.count %}
 
-<div class="card">
-  <div class="card-body">
-    <div class="card-title card-title-with-count">
-      <h1 class="card-title-heading">Logos</h1>
-      <div class="card-title-count">
-        {{ bootstrap_badge_primary(logo_count) }}
+  <div class="card">
+    <div class="card-body">
+      <div class="card-title card-title-with-count">
+        <h1 class="card-title-heading">Logos</h1>
+        <div class="card-title-count">
+          {{ bootstrap_badge_primary(logo_count) }}
+        </div>
       </div>
+
+      {% if logo_count %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Groups</th>
+              <th>Last Updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for logo in pagination.results %}
+            <tr>
+              <td>{{ image_tag(logo.image, {
+                height: 50,
+                style: 'height:50px;object-fit:contain',
+              }) }}</td>
+              <td>
+                {{ logo }}
+                <small class="d-block text-muted">{{ logo.url }}</small>
+              </td>
+              <td>
+                {% for group in logo.groups %}
+                {{ bootstrap_badge_secondary(group.title) }}
+                {% endfor %}
+              </td>
+              <td>{{ logo.updatedAt|datetime }}</td>
+              <td>
+                {% if is_granted(attributes.edit, logo) %}
+                <a class="btn btn-sm btn-primary btn-action" href="{{ path('logo_edit', {id: logo.id}) }}" title="Edit">
+                  {{ bootstrap_icon('pencil') }}
+                  <span class="visually-hidden">Edit</span>
+                </a>
+                {% endif %}
+                {% if is_granted(attributes.delete, logo) %}
+                <a class="btn btn-sm btn-danger btn-action" href="{{ path('logo_delete', {id: logo.id}) }}" title="Delete" data-confirm="Are you sure you want to delete this logo? Clicking OK will take you to a verification step to delete this entry.">
+                  {{ bootstrap_icon('trash') }}
+                  <span class="visually-hidden">Delete</span>
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {{ bootstrap_pagination(pagination) }}
+
+        <small>{{ bootstrap_pagination_info(pagination) }}</small>
+      {% else %}
+        <p>
+          No logos found.
+          {% if can_create_logo %}
+            <a href="{{ create_logo_href }}">Click here to add a logo.</a>
+          {% endif %}
+        </p>
+      {% endif %}
     </div>
-
-    {% if logo_count %}
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Groups</th>
-            <th>Last Updated</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for logo in pagination.results %}
-          <tr>
-            <td>{{ image_tag(logo.image, {
-              height: 50,
-              style: 'height:50px;object-fit:contain',
-            }) }}</td>
-            <td>
-              {{ logo }}
-              <small class="d-block text-muted">{{ logo.url }}</small>
-            </td>
-            <td>
-              {% for group in logo.groups %}
-              {{ bootstrap_badge_secondary(group.title) }}
-              {% endfor %}
-            </td>
-            <td>{{ logo.updatedAt|datetime }}</td>
-            <td>
-              {% if is_granted(attributes.edit, logo) %}
-              <a class="btn btn-sm btn-primary btn-action" href="{{ path('logo_edit', {id: logo.id}) }}" title="Edit">
-                {{ bootstrap_icon('pencil') }}
-                <span class="visually-hidden">Edit</span>
-              </a>
-              {% endif %}
-              {% if is_granted(attributes.delete, logo) %}
-              <a class="btn btn-sm btn-danger btn-action" href="{{ path('logo_delete', {id: logo.id}) }}" title="Delete" data-confirm="Are you sure you want to delete this logo? Clicking OK will take you to a verification step to delete this entry.">
-                {{ bootstrap_icon('trash') }}
-                <span class="visually-hidden">Delete</span>
-              </a>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-
-      {{ bootstrap_pagination(pagination) }}
-
-      <small>{{ bootstrap_pagination_info(pagination) }}</small>
-    {% else %}
-      <p>
-        No logos found.
-        {% if can_create_logo %}
-        <a href="{{ create_logo_href }}">Click here to add a logo.</a>
-        {% endif %}
-      </p>
-    {% endif %}
   </div>
-</div>
 {% endblock %}
