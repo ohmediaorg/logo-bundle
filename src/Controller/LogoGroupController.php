@@ -2,6 +2,7 @@
 
 namespace OHMedia\LogoBundle\Controller;
 
+use OHMedia\BackendBundle\Form\MultiSaveType;
 use OHMedia\BackendBundle\Routing\Attribute\Admin;
 use OHMedia\BootstrapBundle\Service\Paginator;
 use OHMedia\LogoBundle\Entity\LogoGroup;
@@ -12,6 +13,7 @@ use OHMedia\LogoBundle\Security\Voter\LogoGroupVoter;
 use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -59,7 +61,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -69,7 +71,7 @@ class LogoGroupController extends AbstractController
 
                 $this->addFlash('notice', 'The group was created successfully.');
 
-                return $this->redirectToRoute('logo_group_index');
+                return $this->redirectForm($logoGroup, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -96,7 +98,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -106,7 +108,7 @@ class LogoGroupController extends AbstractController
 
                 $this->addFlash('notice', 'The group was updated successfully.');
 
-                return $this->redirectToRoute('logo_group_index');
+                return $this->redirectForm($logoGroup, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -117,6 +119,21 @@ class LogoGroupController extends AbstractController
             'logo_group' => $logoGroup,
             'logos_unselected' => $logoRepository->findNotInLogoGroup($logoGroup),
         ]);
+    }
+
+    private function redirectForm(LogoGroup $logoGroup, FormInterface $form): Response
+    {
+        $clickedButtonName = $form->getClickedButton()->getName() ?? null;
+
+        if ('keep_editing' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_group_edit', [
+                'id' => $logoGroup->getId(),
+            ]);
+        } elseif ('add_another' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_group_create');
+        } else {
+            return $this->redirectToRoute('logo_group_index');
+        }
     }
 
     #[Route('/logos/group/{id}/delete', name: 'logo_group_delete', methods: ['GET', 'POST'])]
