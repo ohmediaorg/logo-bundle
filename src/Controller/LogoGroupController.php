@@ -2,6 +2,7 @@
 
 namespace OHMedia\LogoBundle\Controller;
 
+use Doctrine\ORM\QueryBuilder;
 use OHMedia\BackendBundle\Form\MultiSaveType;
 use OHMedia\BackendBundle\Routing\Attribute\Admin;
 use OHMedia\BootstrapBundle\Service\Paginator;
@@ -12,7 +13,9 @@ use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoGroupVoter;
 use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +29,7 @@ class LogoGroupController extends AbstractController
     }
 
     #[Route('/logos/groups', name: 'logo_group_index', methods: ['GET'])]
-    public function index(Paginator $paginator): Response
+    public function index(Paginator $paginator, Request $request): Response
     {
         $newLogoGroup = new LogoGroup();
 
@@ -39,11 +42,55 @@ class LogoGroupController extends AbstractController
         $qb = $this->logoGroupRepository->createQueryBuilder('lg');
         $qb->orderBy('lg.title', 'desc');
 
+        $searchForm = $this->getSearchForm($request);
+
+        $this->applySearch($searchForm, $qb);
+
         return $this->render('@OHMediaLogo/logo_group/logo_group_index.html.twig', [
             'pagination' => $paginator->paginate($qb, 20),
             'new_logo_group' => $newLogoGroup,
             'attributes' => $this->getAttributes(),
+            'search_form' => $searchForm,
         ]);
+    }
+
+    private function getSearchForm(Request $request): FormInterface
+    {
+        $formBuilder = $this->container->get('form.factory')
+            ->createNamedBuilder('', FormType::class, null, [
+                'csrf_protection' => false,
+            ]);
+
+        $formBuilder->setMethod('GET');
+
+        $formBuilder->add('search', TextType::class, [
+            'required' => false,
+        ]);
+
+        $form = $formBuilder->getForm();
+
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    private function applySearch(FormInterface $form, QueryBuilder $qb): void
+    {
+        $search = $form->get('search')->getData();
+
+        if ($search) {
+            $searchFields = [
+                'lg.title',
+            ];
+
+            $searchLikes = [];
+            foreach ($searchFields as $searchField) {
+                $searchLikes[] = "$searchField LIKE :search";
+            }
+
+            $qb->andWhere('('.implode(' OR ', $searchLikes).')')
+                ->setParameter('search', '%'.$search.'%');
+        }
     }
 
     #[Route('/logos/group/create', name: 'logo_group_create', methods: ['GET', 'POST'])]
