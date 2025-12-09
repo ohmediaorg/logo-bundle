@@ -49,7 +49,7 @@
               </div>
               <div class="col-6">
                 <div class="bg-success-subtle h-100">
-                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected" aria-labelledby="#logos_selected_label">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected" aria-labelledby="logos_selected_label">
                     {% for logo in logo_group.logos %}
                       {{ _self.logo(logo) }}
                     {% endfor %}
@@ -58,7 +58,7 @@
               </div>
               <div class="col-6">
                 <div class="bg-warning-subtle h-100">
-                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected" aria-labelledby="#logos_unselected_label">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected" aria-labelledby="logos_unselected_label">
                     {% for logo in logos_unselected %}
                       {{ _self.logo(logo) }}
                     {% endfor %}
