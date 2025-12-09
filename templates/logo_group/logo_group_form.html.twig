@@ -3,7 +3,10 @@
 {% block meta_title %}{{ form_title }}{% endblock %}
 
 {% macro logo(logo) %}
-  <a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
+  <a
+    href="#" data-logo="{{ logo.id }}"
+    data-logo-name="{{ logo.name|e('html_attr') }}"
+  >
     {{ image_tag(logo.image, {
       height: 50,
       style: 'height: 50px',
@@ -92,6 +95,19 @@
 
       const logos = document.querySelectorAll('[data-logo]');
 
+      function setLogoAttributes(logo, selected) {
+        let label = '';
+
+        if (selected) {
+          label = 'Unselect ' + logo.dataset.logoName;
+        } else {
+          label = 'Select ' + logo.dataset.logoName;
+        }
+
+        logo.setAttribute('aria-label', label);
+        logo.title = label;
+      }
+
       logos.forEach(function(logo) {
         const input = document.getElementById('{{ form.logos.vars.id }}_' + logo.dataset.logo);
 
@@ -101,6 +117,8 @@
           } else {
             containerUnselected.append(logo);
           }
+
+          setLogoAttributes(logo, input.checked);
         }
 
         logo.addEventListener('click', (e) => {
@@ -114,6 +132,8 @@
         input.addEventListener('change', () => {
           handleLogoSelect();
         });
+
+        setLogoAttributes(logo, logo.parentNode === containerSelected);
       });
     });
     </script>
