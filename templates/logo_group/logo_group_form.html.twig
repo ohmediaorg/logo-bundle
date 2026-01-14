@@ -3,7 +3,10 @@
 {% block meta_title %}{{ form_title }}{% endblock %}
 
 {% macro logo(logo) %}
-  <a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
+  <a
+    href="#" data-logo="{{ logo.id }}"
+    data-logo-name="{{ logo.name|e('html_attr') }}"
+  >
     {{ image_tag(logo.image, {
       height: 50,
       style: 'height: 50px',
@@ -36,14 +39,20 @@
 
             <div class="row">
               <div class="col-6">
-                <label>{{ bootstrap_icon('patch-check') }} Selected</label>
+                <div id="logos_selected_label">
+                  {{ bootstrap_icon('patch-check') }}
+                  Selected
+                </div>
               </div>
               <div class="col-6">
-                <label>{{ bootstrap_icon('patch-minus') }} Unselected</label>
+                <div id="logos_unselected_label">
+                  {{ bootstrap_icon('patch-minus') }}
+                  Unselected
+                </div>
               </div>
               <div class="col-6">
                 <div class="bg-success-subtle h-100">
-                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected" aria-labelledby="logos_selected_label">
                     {% for logo in logo_group.logos %}
                       {{ _self.logo(logo) }}
                     {% endfor %}
@@ -52,7 +61,7 @@
               </div>
               <div class="col-6">
                 <div class="bg-warning-subtle h-100">
-                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected" aria-labelledby="logos_unselected_label">
                     {% for logo in logos_unselected %}
                       {{ _self.logo(logo) }}
                     {% endfor %}
@@ -86,6 +95,19 @@
 
       const logos = document.querySelectorAll('[data-logo]');
 
+      function setLogoAttributes(logo, selected) {
+        let label = '';
+
+        if (selected) {
+          label = 'Unselect ' + logo.dataset.logoName;
+        } else {
+          label = 'Select ' + logo.dataset.logoName;
+        }
+
+        logo.setAttribute('aria-label', label);
+        logo.title = label;
+      }
+
       logos.forEach(function(logo) {
         const input = document.getElementById('{{ form.logos.vars.id }}_' + logo.dataset.logo);
 
@@ -95,6 +117,8 @@
           } else {
             containerUnselected.append(logo);
           }
+
+          setLogoAttributes(logo, input.checked);
         }
 
         logo.addEventListener('click', (e) => {
@@ -108,6 +132,8 @@
         input.addEventListener('change', () => {
           handleLogoSelect();
         });
+
+        setLogoAttributes(logo, logo.parentNode === containerSelected);
       });
     });
     </script>
