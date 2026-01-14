@@ -3,113 +3,113 @@
 {% block meta_title %}{{ form_title }}{% endblock %}
 
 {% macro logo(logo) %}
-<a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
-  {{ image_tag(logo.image, {
-    height: 50,
-    style: 'height: 50px',
-  }) }}
-</a>
+  <a href="#" data-logo="{{ logo.id }}" title="{{ logo.name|e('html_attr') }}">
+    {{ image_tag(logo.image, {
+      height: 50,
+      style: 'height: 50px',
+    }) }}
+  </a>
 {% endmacro %}
 
 {% set has_logos = form.logos is defined %}
 
 {% block main %}
-<div class="card">
-  <div class="card-body">
-    <h1 class="card-title">{{ form_title }}</h1>
+  <div class="card">
+    <div class="card-body">
+      <h1 class="card-title">{{ form_title }}</h1>
 
-    {{ form_start(form) }}
-    {{ form_row(form.title) }}
+      {{ form_start(form) }}
+      {{ form_row(form.title) }}
 
-    {% if has_logos %}
-      <fieldset class="mb-3">
-        {{ form_label(form.logos) }}
+      {% if has_logos %}
+        <fieldset class="mb-3">
+          {{ form_label(form.logos) }}
 
-        <div>
-          <small class="d-block mb-3">Click a logo to select/unselect. Logos will be displayed in a random order on the website.</small>
+          <div>
+            <small class="d-block mb-3">Click a logo to select/unselect. Logos will be displayed in a random order on the website.</small>
 
-          {{ form_widget(form.logos, {
-            attr: {
-              style: 'display:none',
-            }
-          }) }}
+            {{ form_widget(form.logos, {
+              attr: {
+                style: 'display:none',
+              }
+            }) }}
 
-          <div class="row">
-            <div class="col-6">
-              <label>{{ bootstrap_icon('check') }} Selected</label>
-            </div>
-            <div class="col-6">
-              <label>{{ bootstrap_icon('x') }} Unselected</label>
-            </div>
-            <div class="col-6">
-              <div class="bg-success-subtle h-100">
-                <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected">
-                  {% for logo in logo_group.logos %}
-                    {{ _self.logo(logo) }}
-                  {% endfor %}
+            <div class="row">
+              <div class="col-6">
+                <label>{{ bootstrap_icon('patch-check') }} Selected</label>
+              </div>
+              <div class="col-6">
+                <label>{{ bootstrap_icon('patch-minus') }} Unselected</label>
+              </div>
+              <div class="col-6">
+                <div class="bg-success-subtle h-100">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_selected">
+                    {% for logo in logo_group.logos %}
+                      {{ _self.logo(logo) }}
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="col-6">
-              <div class="bg-warning-subtle h-100">
-                <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected">
-                  {% for logo in logos_unselected %}
-                    {{ _self.logo(logo) }}
-                  {% endfor %}
+              <div class="col-6">
+                <div class="bg-warning-subtle h-100">
+                  <div class="d-flex flex-wrap gap-2 p-2" id="logos_unselected">
+                    {% for logo in logos_unselected %}
+                      {{ _self.logo(logo) }}
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </fieldset>
-    {% else %}
-      <fieldset class="mb-3">
-        <legend class="col-form-label">Logos</legend>
+        </fieldset>
+      {% else %}
+        <fieldset class="mb-3">
+          <legend class="col-form-label">Logos</legend>
 
-        <div>
-          <small class="d-block mb-3">There aren't any logos yet.</small>
-        </div>
-      </fieldset>
-    {% endif %}
+          <div>
+            <small class="d-block mb-3">There aren't any logos yet.</small>
+          </div>
+        </fieldset>
+      {% endif %}
 
-    {{ form_end(form) }}
+      {{ form_end(form) }}
+    </div>
   </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
-{% if has_logos %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const containerSelected = document.getElementById('logos_selected');
-  const containerUnselected = document.getElementById('logos_unselected');
+  {% if has_logos %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const containerSelected = document.getElementById('logos_selected');
+      const containerUnselected = document.getElementById('logos_unselected');
 
-  const logos = document.querySelectorAll('[data-logo]');
+      const logos = document.querySelectorAll('[data-logo]');
 
-  logos.forEach(function(logo) {
-    const input = document.getElementById('{{ form.logos.vars.id }}_' + logo.dataset.logo);
+      logos.forEach(function(logo) {
+        const input = document.getElementById('{{ form.logos.vars.id }}_' + logo.dataset.logo);
 
-    function handleLogoSelect() {
-      if (input.checked) {
-        containerSelected.append(logo);
-      } else {
-        containerUnselected.append(logo);
-      }
-    }
+        function handleLogoSelect() {
+          if (input.checked) {
+            containerSelected.append(logo);
+          } else {
+            containerUnselected.append(logo);
+          }
+        }
 
-    logo.addEventListener('click', (e) => {
-      e.preventDefault();
+        logo.addEventListener('click', (e) => {
+          e.preventDefault();
 
-      input.checked = !input.checked;
+          input.checked = !input.checked;
 
-      handleLogoSelect();
+          handleLogoSelect();
+        });
+
+        input.addEventListener('change', () => {
+          handleLogoSelect();
+        });
+      });
     });
-
-    input.addEventListener('change', () => {
-      handleLogoSelect();
-    });
-  });
-});
-</script>
-{% endif %}
+    </script>
+  {% endif %}
 {% endblock %}

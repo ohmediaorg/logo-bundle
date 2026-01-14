@@ -2,6 +2,8 @@
 
 namespace OHMedia\LogoBundle\Controller;
 
+use Doctrine\ORM\QueryBuilder;
+use OHMedia\BackendBundle\Form\MultiSaveType;
 use OHMedia\BackendBundle\Routing\Attribute\Admin;
 use OHMedia\BootstrapBundle\Service\Paginator;
 use OHMedia\LogoBundle\Entity\Logo;
@@ -11,7 +13,10 @@ use OHMedia\LogoBundle\Security\Voter\LogoVoter;
 use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +29,7 @@ class LogoController extends AbstractController
     }
 
     #[Route('/logos', name: 'logo_index', methods: ['GET'])]
-    public function index(Paginator $paginator): Response
+    public function index(Paginator $paginator, Request $request): Response
     {
         $newLogo = new Logo();
 
@@ -37,11 +42,57 @@ class LogoController extends AbstractController
         $qb = $this->logoRepository->createQueryBuilder('l');
         $qb->orderBy('l.name', 'desc');
 
+        $searchForm = $this->getSearchForm($request);
+
+        $this->applySearch($searchForm, $qb);
+
         return $this->render('@OHMediaLogo/logo/logo_index.html.twig', [
             'pagination' => $paginator->paginate($qb, 20),
             'new_logo' => $newLogo,
             'attributes' => $this->getAttributes(),
+            'search_form' => $searchForm,
         ]);
+    }
+
+    private function getSearchForm(Request $request): FormInterface
+    {
+        $formBuilder = $this->container->get('form.factory')
+            ->createNamedBuilder('', FormType::class, null, [
+                'csrf_protection' => false,
+            ]);
+
+        $formBuilder->setMethod('GET');
+
+        $formBuilder->add('search', SearchType::class, [
+            'required' => false,
+            'label' => 'Name, URL',
+        ]);
+
+        $form = $formBuilder->getForm();
+
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    private function applySearch(FormInterface $form, QueryBuilder $qb): void
+    {
+        $search = $form->get('search')->getData();
+
+        if ($search) {
+            $searchFields = [
+                'l.name',
+                'l.url',
+            ];
+
+            $searchLikes = [];
+            foreach ($searchFields as $searchField) {
+                $searchLikes[] = "$searchField LIKE :search";
+            }
+
+            $qb->andWhere('('.implode(' OR ', $searchLikes).')')
+                ->setParameter('search', '%'.$search.'%');
+        }
     }
 
     #[Route('/logo/create', name: 'logo_create', methods: ['GET', 'POST'])]
@@ -57,7 +108,7 @@ class LogoController extends AbstractController
 
         $form = $this->createForm(LogoType::class, $logo);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -67,7 +118,7 @@ class LogoController extends AbstractController
 
                 $this->addFlash('notice', 'The logo was created successfully.');
 
-                return $this->redirectToRoute('logo_index');
+                return $this->redirectForm($logo, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -92,7 +143,7 @@ class LogoController extends AbstractController
 
         $form = $this->createForm(LogoType::class, $logo);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -102,7 +153,7 @@ class LogoController extends AbstractController
 
                 $this->addFlash('notice', 'The logo was updated successfully.');
 
-                return $this->redirectToRoute('logo_index');
+                return $this->redirectForm($logo, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -112,6 +163,21 @@ class LogoController extends AbstractController
             'form' => $form->createView(),
             'logo' => $logo,
         ]);
+    }
+
+    private function redirectForm(Logo $logo, FormInterface $form): Response
+    {
+        $clickedButtonName = $form->getClickedButton()->getName() ?? null;
+
+        if ('keep_editing' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_edit', [
+                'id' => $logo->getId(),
+            ]);
+        } elseif ('add_another' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_create');
+        } else {
+            return $this->redirectToRoute('logo_index');
+        }
     }
 
     #[Route('/logo/{id}/delete', name: 'logo_delete', methods: ['GET', 'POST'])]

@@ -2,6 +2,8 @@
 
 namespace OHMedia\LogoBundle\Controller;
 
+use Doctrine\ORM\QueryBuilder;
+use OHMedia\BackendBundle\Form\MultiSaveType;
 use OHMedia\BackendBundle\Routing\Attribute\Admin;
 use OHMedia\BootstrapBundle\Service\Paginator;
 use OHMedia\LogoBundle\Entity\LogoGroup;
@@ -11,7 +13,10 @@ use OHMedia\LogoBundle\Repository\LogoRepository;
 use OHMedia\LogoBundle\Security\Voter\LogoGroupVoter;
 use OHMedia\UtilityBundle\Form\DeleteType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +29,7 @@ class LogoGroupController extends AbstractController
     }
 
     #[Route('/logos/groups', name: 'logo_group_index', methods: ['GET'])]
-    public function index(Paginator $paginator): Response
+    public function index(Paginator $paginator, Request $request): Response
     {
         $newLogoGroup = new LogoGroup();
 
@@ -37,11 +42,56 @@ class LogoGroupController extends AbstractController
         $qb = $this->logoGroupRepository->createQueryBuilder('lg');
         $qb->orderBy('lg.title', 'desc');
 
+        $searchForm = $this->getSearchForm($request);
+
+        $this->applySearch($searchForm, $qb);
+
         return $this->render('@OHMediaLogo/logo_group/logo_group_index.html.twig', [
             'pagination' => $paginator->paginate($qb, 20),
             'new_logo_group' => $newLogoGroup,
             'attributes' => $this->getAttributes(),
+            'search_form' => $searchForm,
         ]);
+    }
+
+    private function getSearchForm(Request $request): FormInterface
+    {
+        $formBuilder = $this->container->get('form.factory')
+            ->createNamedBuilder('', FormType::class, null, [
+                'csrf_protection' => false,
+            ]);
+
+        $formBuilder->setMethod('GET');
+
+        $formBuilder->add('search', SearchType::class, [
+            'required' => false,
+            'label' => 'Title',
+        ]);
+
+        $form = $formBuilder->getForm();
+
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    private function applySearch(FormInterface $form, QueryBuilder $qb): void
+    {
+        $search = $form->get('search')->getData();
+
+        if ($search) {
+            $searchFields = [
+                'lg.title',
+            ];
+
+            $searchLikes = [];
+            foreach ($searchFields as $searchField) {
+                $searchLikes[] = "$searchField LIKE :search";
+            }
+
+            $qb->andWhere('('.implode(' OR ', $searchLikes).')')
+                ->setParameter('search', '%'.$search.'%');
+        }
     }
 
     #[Route('/logos/group/create', name: 'logo_group_create', methods: ['GET', 'POST'])]
@@ -59,7 +109,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -69,7 +119,7 @@ class LogoGroupController extends AbstractController
 
                 $this->addFlash('notice', 'The group was created successfully.');
 
-                return $this->redirectToRoute('logo_group_index');
+                return $this->redirectForm($logoGroup, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -96,7 +146,7 @@ class LogoGroupController extends AbstractController
 
         $form = $this->createForm(LogoGroupType::class, $logoGroup);
 
-        $form->add('save', SubmitType::class);
+        $form->add('save', MultiSaveType::class);
 
         $form->handleRequest($request);
 
@@ -106,7 +156,7 @@ class LogoGroupController extends AbstractController
 
                 $this->addFlash('notice', 'The group was updated successfully.');
 
-                return $this->redirectToRoute('logo_group_index');
+                return $this->redirectForm($logoGroup, $form);
             }
 
             $this->addFlash('error', 'There are some errors in the form below.');
@@ -117,6 +167,21 @@ class LogoGroupController extends AbstractController
             'logo_group' => $logoGroup,
             'logos_unselected' => $logoRepository->findNotInLogoGroup($logoGroup),
         ]);
+    }
+
+    private function redirectForm(LogoGroup $logoGroup, FormInterface $form): Response
+    {
+        $clickedButtonName = $form->getClickedButton()->getName() ?? null;
+
+        if ('keep_editing' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_group_edit', [
+                'id' => $logoGroup->getId(),
+            ]);
+        } elseif ('add_another' === $clickedButtonName) {
+            return $this->redirectToRoute('logo_group_create');
+        } else {
+            return $this->redirectToRoute('logo_group_index');
+        }
     }
 
     #[Route('/logos/group/{id}/delete', name: 'logo_group_delete', methods: ['GET', 'POST'])]
