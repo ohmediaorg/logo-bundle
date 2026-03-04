@@ -18,6 +18,7 @@ class LogoType extends AbstractType
         $builder->add('url', UrlType::class, [
             'required' => false,
             'label' => 'URL',
+            'default_protocol' => null,
         ]);
 
         $builder->add('image', FileEntityType::class, [
