@@ -23,7 +23,7 @@ class WysiwygExtension extends AbstractWysiwygExtension
         ];
     }
 
-    public function logos(Environment $twig, int $id = null): string
+    public function logos(Environment $twig, ?int $id = null): string
     {
         $logoGroup = $id ? $this->logoGroupRepository->find($id) : null;
 
